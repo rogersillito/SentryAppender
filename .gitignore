@@ -84,6 +84,9 @@ packages
 # Ciao Build Directory
 build
 
+# temp dir for NuGet packaging
+NuGet_TEMP
+
 # Windows Azure Build Output
 csx
 *.build.csdef
