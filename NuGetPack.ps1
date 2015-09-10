@@ -12,12 +12,16 @@ function CopyAttr($attributeName, $srcNode, $destNode) {
     $destNode.SetAttribute($attributeName, $value)
 }
 
+function RemoveChildNode($xmlDoc, $parentNode, $childXPath) {
+    $childNode = $xmlDoc.SelectSingleNode($childXPath)
+    if ($childNode) {
+        $parentNode.RemoveChild($childNode) | Out-Null
+    }
+}
+
 function PrepareDependenciesNode ($nuspecXml) {
     $nuspecMetadataNode = $nuspecXml.SelectSingleNode("/package/metadata")
-    $dependenciesNode = $nuspecXml.SelectSingleNode("/package/metadata/dependencies")
-    if ($dependenciesNode) {
-        $nuspecMetadataNode.RemoveChild($dependenciesNode) | Out-Null
-    }
+    RemoveChildNode -xmlDoc $nuspecXml -parentNode $nuspecMetadataNode -childXPath "/package/metadata/dependencies"
     $dependenciesNode = $nuspecXml.CreateElement("dependencies")
     $nuspecMetadataNode.AppendChild($dependenciesNode) | Out-Null
     return $dependenciesNode
@@ -70,13 +74,13 @@ Copy-Item -Path $nuspec -Destination $tempDir
 $dllConfig = "$libDir\$assembly.dll.config"
 $configXml = [xml](Get-Content $dllConfig)
 $configurationNode = $configXml.SelectSingleNode("/configuration")
-$configurationNode.RemoveChild($configXml.SelectSingleNode("/configuration/configSections")) | Out-Null
-$configurationNode.RemoveChild($configXml.SelectSingleNode("/configuration/log4net")) | Out-Null
+RemoveChildNode -xmlDoc $configXml -parentNode $configurationNode -childXPath "/configuration/configSections"
+RemoveChildNode -xmlDoc $configXml -parentNode $configurationNode -childXPath "/configuration/log4net"
 $configXml.Save($dllConfig)
 
 $versionString = GetVersion -ciaoProps $ciaoProps
 
 ExecNuget -command "Update -Self"
-ExecNuget -command "Pack '$tempDir\$assembly.nuspec' -Version $versionString -OutputDirectory $artifactsDir"
+ExecNuget -command "Pack '$tempDir\$assembly.nuspec' -Version $versionString -OutputDirectory '$artifactsDir'"
 
 DeleteTempDir
