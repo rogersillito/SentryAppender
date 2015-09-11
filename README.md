@@ -9,9 +9,9 @@ Configure in app.config:
 <log4net>
 	<root>
 		<level value="DEBUG" />
-		<appender-ref ref="RavenAppender" />
+		<appender-ref ref="SentryAppender" />
 	</root>
-	<appender name="RavenAppender" type="SharpRaven.Log4Net.SentryAppender, SharpRaven.Log4Net">
+	<appender name="SentryAppender" type="SharpRaven.Log4Net.SentryAppender, SharpRaven.Log4Net">
 		<DSN value="DSN_FROM_SENTRY_UI" />
 		<Logger value="LOGGER_NAME" />
 		<threshold value="ERROR" />
