@@ -3,7 +3,7 @@
   <metadata>
     <id>SharpRaven.Log4Net</id>
     <version>$version$</version>
-    <title>SharpRaven.Log4Net</title>
+    <title>SharpRaven.Log4Net (SentryAppender)</title>
     <authors>Adam Hill, Chris Eldredge</authors>
     <owners>The Motley Fool, LLC</owners>
     <projectUrl>https://github.com/themotleyfool/SentryAppender/</projectUrl>
