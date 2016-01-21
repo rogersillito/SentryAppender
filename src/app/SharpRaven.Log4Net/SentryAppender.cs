@@ -41,7 +41,7 @@ namespace SharpRaven.Log4Net
 
 		            // If something goes wrong when sending the event to Sentry, make sure this is written to log4net's internal
 		            // log. See <add key="log4net.Internal.Debug" value="true"/>
-		            ErrorOnCapture = ex => LogLog.Error(typeof (SentryAppender), Name + ex.Message, ex)
+		            ErrorOnCapture = ex => LogLog.Error(typeof (SentryAppender), "[" + Name + "] " + ex.Message, ex)
 	            };
             }
 
