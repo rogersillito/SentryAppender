@@ -21,3 +21,5 @@ Configure in app.config:
 	</appender>
 </log4net>
 ```
+
+To debug issues with events not reaching sentry, turn on log4net logging: http://haacked.com/archive/2006/09/27/Log4Net_Troubleshooting.aspx/
