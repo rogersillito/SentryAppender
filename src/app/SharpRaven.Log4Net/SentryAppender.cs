@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 using log4net.Layout;
+using log4net.Util;
 
 using SharpRaven.Data;
 using SharpRaven.Log4Net.Extra;
@@ -34,10 +35,14 @@ namespace SharpRaven.Log4Net
         {
             if (ravenClient == null)
             {
-                ravenClient = new RavenClient(DSN)
-                {
-                    Logger = Logger
-                };
+	            ravenClient = new RavenClient(DSN)
+	            {
+		            Logger = Logger,
+
+		            // If something goes wrong when sending the event to Sentry, make sure this is written to log4net's internal
+		            // log. See <add key="log4net.Internal.Debug" value="true"/>
+		            ErrorOnCapture = ex => LogLog.Error(typeof (SentryAppender), "[" + Name + "] " + ex.Message, ex)
+	            };
             }
 
             var httpExtra = HttpExtra.GetHttpExtra();
