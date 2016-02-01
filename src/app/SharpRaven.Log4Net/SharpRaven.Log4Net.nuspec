@@ -14,9 +14,9 @@
     <tags>sentry logging monitoring log4net</tags>
     <iconUrl>https://raw.githubusercontent.com/getsentry/raven-csharp/master/sentry-icon.png</iconUrl>
     <dependencies>
-      <dependency id="log4net" version="2.0.3" />
+      <dependency id="log4net" version="2.0.5" />
       <dependency id="Newtonsoft.Json" version="6.0.6" />
-      <dependency id="SharpRaven" version="1.4.6" />
+      <dependency id="SharpRaven" version="1.5.0" />
     </dependencies>
   </metadata>
 </package>
