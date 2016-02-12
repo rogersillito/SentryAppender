@@ -9,6 +9,9 @@ namespace SharpRaven.Log4Net.Extra
             MachineName = Environment.MachineName;
             Version = Environment.Version.ToString();
             OSVersion = Environment.OSVersion.ToString();
+			try {
+		        CommandLineArgs = Environment.GetCommandLineArgs();
+			} catch (NotSupportedException) { } // The system does not support command-line arguments.
         }
 
 
@@ -17,5 +20,7 @@ namespace SharpRaven.Log4Net.Extra
         public string Version { get; private set; }
 
         public string OSVersion { get; private set; }
+
+		public string[] CommandLineArgs { get; private set; }
     }
 }

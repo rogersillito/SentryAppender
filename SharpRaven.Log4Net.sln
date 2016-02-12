@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.30324.0
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRaven.Log4Net", "src\app\SharpRaven.Log4Net\SharpRaven.Log4Net.csproj", "{89A4E2A9-2D28-4500-B041-30D7A6C040D3}"
 EndProject
@@ -29,6 +29,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ciao", "Ciao", "{2E9C4257-0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRaven.Log4Net.Tests.Web", "src\tests\SharpRaven.Log4Net.Tests.Web\SharpRaven.Log4Net.Tests.Web.csproj", "{913CC976-8AFB-4005-910D-8C2AB7B9AE44}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRaven.Log4Net.Tests.Console", "SharpRaven.Log4Net.Tests.Console\SharpRaven.Log4Net.Tests.Console.csproj", "{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -46,6 +48,10 @@ Global
 		{913CC976-8AFB-4005-910D-8C2AB7B9AE44}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{913CC976-8AFB-4005-910D-8C2AB7B9AE44}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{913CC976-8AFB-4005-910D-8C2AB7B9AE44}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}.Release|Any CPU.Build.0 = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -54,5 +60,6 @@ Global
 		{89A4E2A9-2D28-4500-B041-30D7A6C040D3} = {DD133F81-C83C-4A43-B0E1-5C76BFC71591}
 		{6879BBB1-49BC-4423-814D-5141CA347086} = {8EB01430-98C2-413E-B3D5-C8CDFA6A1EDC}
 		{913CC976-8AFB-4005-910D-8C2AB7B9AE44} = {8EB01430-98C2-413E-B3D5-C8CDFA6A1EDC}
+		{E27E5127-2D30-4266-81C4-8A3DCE08E1CA} = {8EB01430-98C2-413E-B3D5-C8CDFA6A1EDC}
 	EndGlobalSection
 EndGlobal
