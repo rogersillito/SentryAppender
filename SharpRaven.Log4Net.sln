@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Ciao", "Ciao", "{2E9C4257-0
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRaven.Log4Net.Tests.Web", "src\tests\SharpRaven.Log4Net.Tests.Web\SharpRaven.Log4Net.Tests.Web.csproj", "{913CC976-8AFB-4005-910D-8C2AB7B9AE44}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRaven.Log4Net.Tests.Console", "SharpRaven.Log4Net.Tests.Console\SharpRaven.Log4Net.Tests.Console.csproj", "{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SharpRaven.Log4Net.Tests.Console", "src\tests\SharpRaven.Log4Net.Tests.Console\SharpRaven.Log4Net.Tests.Console.csproj", "{E27E5127-2D30-4266-81C4-8A3DCE08E1CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
