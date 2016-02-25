@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartArguments>THIS SHOULD APPEAR IN SENTRY LOG</StartArguments>
     <PlatformTarget>AnyCPU</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
@@ -31,9 +32,9 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.6\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="SharpRaven, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\SharpRaven.1.5.0\lib\net45\SharpRaven.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="SharpRaven, Version=1.5.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\packages\SharpRaven.1.5.1\lib\net45\SharpRaven.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
