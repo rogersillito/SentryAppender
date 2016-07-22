@@ -100,7 +100,7 @@ namespace SharpRaven.Log4Net
         }
 
 
-        internal static ErrorLevel Translate(Level level)
+        public static ErrorLevel Translate(Level level)
         {
             switch (level.DisplayName)
             {
