@@ -58,6 +58,7 @@ namespace SharpRaven.Log4Net.Tests {
 					It.Is<SentryMessage>(sm => sm.Message == "Custom message"),
 					It.IsAny<ErrorLevel>(),
 					It.IsAny<IDictionary<string, string>>(),
+                    It.IsAny<string[]>(),
 					It.IsAny<object>()),
 				Times.Once);
 		}
@@ -73,7 +74,8 @@ namespace SharpRaven.Log4Net.Tests {
 					It.Is<SentryMessage>(sm => sm == null),
 					It.IsAny<ErrorLevel>(),
 					It.IsAny<IDictionary<string, string>>(),
-					It.IsAny<object>()),
+                    It.IsAny<string[]>(),
+                    It.IsAny<object>()),
 				Times.Once);
 		}
 
