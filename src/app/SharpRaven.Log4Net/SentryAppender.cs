@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using log4net.Layout;
 using log4net.Util;
@@ -24,7 +23,9 @@ namespace SharpRaven.Log4Net
         protected IRavenClient RavenClient;
         public string DSN { get; set; }
         public string Logger { get; set; }
-        private readonly IList<SentryTag> tagLayouts = new List<SentryTag>();
+        public string Environment { get; set; }
+        public string Release { get; set; }
+        private readonly List<SentryTag> tagLayouts = new List<SentryTag>();
 
         public void AddTag(SentryTag tag)
         {
@@ -35,22 +36,49 @@ namespace SharpRaven.Log4Net
         {
             if (RavenClient == null)
             {
-	            RavenClient = new RavenClient(DSN)
-	            {
-		            Logger = Logger,
+                RavenClient = new RavenClient(DSN)
+                {
+                    Logger = Logger,
+                    Environment = Environment,
+                    Release = Release,
 
-		            // If something goes wrong when sending the event to Sentry, make sure this is written to log4net's internal
-		            // log. See <add key="log4net.Internal.Debug" value="true"/>
-		            ErrorOnCapture = ex => LogLog.Error(typeof (SentryAppender), "[" + Name + "] " + ex.Message, ex)
-	            };
+                    // If something goes wrong when sending the event to Sentry, make sure this is written to log4net's internal
+                    // log. See <add key="log4net.Internal.Debug" value="true"/>
+                    ErrorOnCapture = ex => LogLog.Error(typeof (SentryAppender), "[" + Name + "] " + ex.Message, ex)
+                };
             }
 
+            SentryEvent sentryEvent = null;
+
+            if (loggingEvent.ExceptionObject != null)
+            {
+                // We should capture both the exception and the message passed
+                sentryEvent = new SentryEvent(loggingEvent.ExceptionObject);
+                sentryEvent.Message = loggingEvent.RenderedMessage;
+            }
+            else if (loggingEvent.MessageObject is Exception)
+            {
+                // We should capture the exception with no custom message
+                sentryEvent = new SentryEvent(loggingEvent.MessageObject as Exception);
+            }
+            else
+            {
+                // Just capture message
+                sentryEvent = new SentryEvent(loggingEvent.RenderedMessage);
+            }
+
+            // Assign error level
+            sentryEvent.Level = Translate(loggingEvent.Level);
+
+            // Format and add tags
+            tagLayouts.ForEach(tl => sentryEvent.Tags.Add(tl.Name, (tl.Layout.Format(loggingEvent) ?? string.Empty).ToString()));
+
+            // Add extra data with or without HTTP-related fields
             var httpExtra = HttpExtra.GetHttpExtra();
-            object extra;
 
             if (httpExtra != null)
             {
-                extra = new
+                sentryEvent.Extra = new
                 {
                     Environment = new EnvironmentExtra(),
                     Http = httpExtra
@@ -58,47 +86,14 @@ namespace SharpRaven.Log4Net
             }
             else
             {
-                extra = new
+                sentryEvent.Extra = new
                 {
                     Environment = new EnvironmentExtra()
                 };
             }
 
-            var tags = tagLayouts.ToDictionary(t => t.Name, t => (t.Layout.Format(loggingEvent) ?? "").ToString());
-
-            var exception = loggingEvent.ExceptionObject ?? loggingEvent.MessageObject as Exception;
-            var level = Translate(loggingEvent.Level);
-
-	        if (loggingEvent.ExceptionObject != null)
-	        {
-				// We should capture buth the exception and the message passed
-		        RavenClient.CaptureException(exception,
-			        new SentryMessage(loggingEvent.RenderedMessage),
-			        level,
-			        tags: tags,
-			        extra: extra);
-	        }
-	        else if (loggingEvent.MessageObject is Exception)
-	        {
-				// We should capture the exception with no custom message
-				RavenClient.CaptureException(loggingEvent.MessageObject as Exception,
-					null,
-					level,
-					tags: tags,
-					extra: extra);
-	        }
-	        else
-	        {
-				// Just capture message
-		        var message = loggingEvent.RenderedMessage;
-
-		        if (message != null)
-		        {
-			        RavenClient.CaptureMessage(message, level, tags, extra);
-		        }
-	        }
+            RavenClient.Capture(sentryEvent);
         }
-
 
         public static ErrorLevel Translate(Level level)
         {
@@ -117,7 +112,6 @@ namespace SharpRaven.Log4Net
                        ? ErrorLevel.Error
                        : errorLevel;
         }
-
 
         protected override void Append(LoggingEvent[] loggingEvents)
         {
