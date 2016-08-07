@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 using log4net.Core;
 using log4net.Repository;
@@ -9,6 +8,7 @@ using Moq;
 using NUnit.Framework;
 
 using SharpRaven.Data;
+using SharpRaven.Log4Net.Extra;
 
 namespace SharpRaven.Log4Net.Tests {
     [TestFixture]
@@ -45,9 +45,41 @@ namespace SharpRaven.Log4Net.Tests {
             _sentryAppender.SetRavenClient(_ravenClientMock.Object);
 
             // Capture should return non-null message ID or null if something failed
-            _ravenClientMock.Setup<string>(foo => foo.Capture(It.IsNotNull<SentryEvent>()))
+            _ravenClientMock.Setup(foo => foo.Capture(It.IsAny<SentryEvent>()))
                             .Callback<SentryEvent>(foo => _testEvent = foo)
                             .Returns("fake message ID");
+        }
+
+        [Test]
+        public void Append_TestGeneralEventProperties()
+        {
+            _sentryAppender.DoAppendUnderTest(CreateLoggingEvent("TestMessage"));
+
+            Assert.That(_testEvent.Level, Is.EqualTo(ErrorLevel.Error));
+        }
+
+        [Test]
+        public void Append_TestExtraProperties()
+        {
+            _sentryAppender.DoAppendUnderTest(CreateLoggingEvent("TestMessage"));
+
+            var envExtra = _testEvent.Extra?.GetType().GetProperty("Environment")?.GetValue(_testEvent.Extra, null) as EnvironmentExtra;
+
+            Assert.That(envExtra.MachineName, Is.EqualTo(Environment.MachineName));
+            Assert.That(envExtra.Version, Is.EqualTo(Environment.Version.ToString()));
+            Assert.That(envExtra.OSVersion, Is.EqualTo(Environment.OSVersion.ToString()));
+
+            string[] commandLineArgs = null;
+            try
+            {
+                commandLineArgs = Environment.GetCommandLineArgs();
+
+                Assert.That(envExtra.CommandLineArgs, Is.EquivalentTo(commandLineArgs));
+            }
+            catch (NotSupportedException)
+            {
+                Assert.That(envExtra.CommandLineArgs, Is.Null);
+            }
         }
 
         [Test]

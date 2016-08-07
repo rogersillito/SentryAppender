@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Configuration;
 
 using NUnit.Framework;
 
@@ -10,7 +11,6 @@ namespace SharpRaven.Log4Net.Tests
     public class Log4NetTests
     {
         private ILog log;
-
 
         private static void DivideByZero(int stackFrames = 10)
         {
@@ -27,6 +27,9 @@ namespace SharpRaven.Log4Net.Tests
         [TestFixtureSetUp]
         public void TestFixtureSetUp()
         {
+            // This is needed when running tests under NUnit since NUnit uses log4net internally
+            log4net.Config.XmlConfigurator.Configure();
+
             this.log = LogManager.GetLogger(GetType());
         }
 

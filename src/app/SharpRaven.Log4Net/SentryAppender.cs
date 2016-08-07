@@ -23,6 +23,8 @@ namespace SharpRaven.Log4Net
         protected IRavenClient RavenClient;
         public string DSN { get; set; }
         public string Logger { get; set; }
+        public string Environment { get; set; }
+        public string Release { get; set; }
         private readonly List<SentryTag> tagLayouts = new List<SentryTag>();
 
         public void AddTag(SentryTag tag)
@@ -37,6 +39,8 @@ namespace SharpRaven.Log4Net
                 RavenClient = new RavenClient(DSN)
                 {
                     Logger = Logger,
+                    Environment = Environment,
+                    Release = Release,
 
                     // If something goes wrong when sending the event to Sentry, make sure this is written to log4net's internal
                     // log. See <add key="log4net.Internal.Debug" value="true"/>
@@ -67,7 +71,7 @@ namespace SharpRaven.Log4Net
             sentryEvent.Level = Translate(loggingEvent.Level);
 
             // Format and add tags
-            tagLayouts.ForEach(tl => sentryEvent.Tags.Add(tl.Name, (tl.Layout.Format(loggingEvent) ?? String.Empty).ToString()));
+            tagLayouts.ForEach(tl => sentryEvent.Tags.Add(tl.Name, (tl.Layout.Format(loggingEvent) ?? string.Empty).ToString()));
 
             // Add extra data with or without HTTP-related fields
             var httpExtra = HttpExtra.GetHttpExtra();
