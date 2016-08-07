@@ -63,7 +63,5 @@ namespace SharpRaven.Log4Net.Tests.Console {
 				log2.Error("Custom log", aEx);
 			}
 		}
-
-
 	}
 }

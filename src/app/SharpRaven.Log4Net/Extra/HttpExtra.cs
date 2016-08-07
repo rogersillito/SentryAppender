@@ -159,7 +159,7 @@ namespace SharpRaven.Log4Net.Extra
             {
                 NameObjectCollectionBase collection = collectionGetter.Invoke(this.httpContext);
 
-                foreach (var key in collection.Keys)
+                foreach (string key in collection.Keys)
                 {
                     // NOTE: Ignore these keys as they just add duplicate information. [asbjornu]
                     if (key == "ALL_HTTP" || key == "ALL_RAW")
