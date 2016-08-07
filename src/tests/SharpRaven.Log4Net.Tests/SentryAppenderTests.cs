@@ -12,8 +12,8 @@ using SharpRaven.Data;
 
 namespace SharpRaven.Log4Net.Tests {
     [TestFixture]
-    public class SentryAppenderTests {
-
+    public class SentryAppenderTests
+    {
         #region Derived test class
         /// <summary>Derived SentryAppender that gives us access to the raven client so that we can test</summary>
         public class SentryAppenderUnderTest : SentryAppender
@@ -33,6 +33,7 @@ namespace SharpRaven.Log4Net.Tests {
         private Mock<IRavenClient> _ravenClientMock;
         private Mock<ILoggerRepository> _loggerRepositoryMock;
         private SentryAppenderUnderTest _sentryAppender;
+        private SentryEvent _testEvent;
 
         [SetUp]
         public void SetUp()
@@ -42,43 +43,75 @@ namespace SharpRaven.Log4Net.Tests {
 
             _sentryAppender = new SentryAppenderUnderTest();
             _sentryAppender.SetRavenClient(_ravenClientMock.Object);
+
+            // Capture should return non-null message ID or null if something failed
+            _ravenClientMock.Setup<string>(foo => foo.Capture(It.IsNotNull<SentryEvent>()))
+                            .Callback<SentryEvent>(foo => _testEvent = foo)
+                            .Returns("fake message ID");
         }
 
         [Test]
-        public void Append_WithExceptionAndMessage() {
+        public void Append_WithExceptionAndMessage()
+        {
             var exception = new Exception("ExceptionAndMessage");
 
             _sentryAppender.DoAppendUnderTest(CreateLoggingEvent("Custom message", exception));
 
-            _ravenClientMock.Verify(
-                rc => rc.CaptureException(It.Is<Exception>(e => Object.ReferenceEquals(e, exception)),
-                    It.Is<SentryMessage>(sm => sm.Message == "Custom message"),
-                    It.IsAny<ErrorLevel>(),
-                    It.IsAny<IDictionary<string, string>>(),
-                    It.IsAny<object>()),
-                Times.Once);
+            _ravenClientMock.Verify(foo => foo.Capture(It.IsNotNull<SentryEvent>()), Times.Once);
+
+            Assert.That(_testEvent.Exception, Is.EqualTo(exception));
+            Assert.That(_testEvent.Message.Message, Is.EqualTo("Custom message"));
         }
 
         [Test]
-        public void Append_WithJustException() {
+        public void Append_WithJustException()
+        {
             var exception = new Exception("JustException");
 
             _sentryAppender.DoAppendUnderTest(CreateLoggingEvent(exception));
 
-            _ravenClientMock.Verify(
-                rc => rc.CaptureException(It.Is<Exception>(e => Object.ReferenceEquals(e, exception)),
-                    It.Is<SentryMessage>(sm => sm == null),
-                    It.IsAny<ErrorLevel>(),
-                    It.IsAny<IDictionary<string, string>>(),
-                    It.IsAny<object>()),
-                Times.Once);
+            _ravenClientMock.Verify(foo => foo.Capture(It.IsNotNull<SentryEvent>()), Times.Once);
+
+            Assert.That(_testEvent.Exception, Is.EqualTo(exception));
+            Assert.That(_testEvent.Message.Message, Is.EqualTo("JustException"));
+        }
+
+        [Test]
+        public void Append_WithJustMessage()
+        {
+            _sentryAppender.DoAppendUnderTest(CreateLoggingEvent("JustMessage"));
+
+            _ravenClientMock.Verify(foo => foo.Capture(It.IsNotNull<SentryEvent>()), Times.Once);
+
+            Assert.That(_testEvent.Exception, Is.Null);
+            Assert.That(_testEvent.Message.Message, Is.EqualTo("JustMessage"));
+        }
+
+        [Test]
+        public void Append_WithNullMessage()
+        {
+            _sentryAppender.DoAppendUnderTest(CreateLoggingEvent(null));
+
+            _ravenClientMock.Verify(foo => foo.Capture(It.IsNotNull<SentryEvent>()), Times.Once);
+
+            Assert.That(_testEvent.Exception, Is.Null);
+            Assert.That(_testEvent.Message.Message, Is.EqualTo(String.Empty));
+        }
+
+        [Test]
+        public void Append_WithNullEvent()
+        {
+            _sentryAppender.DoAppendUnderTest(null);
+
+            // Nothing captured because there was nothing to capture
+            _ravenClientMock.Verify(foo => foo.Capture(It.IsNotNull<SentryEvent>()), Times.Never);
         }
 
         private LoggingEvent CreateLoggingEvent(object message, Exception exception = null)
         {
             return new LoggingEvent(typeof(SentryAppenderTests),
                 _loggerRepositoryMock.Object,
-                "test",
+                "testLoggerName",
                 Level.Error,
                 message,
                 exception);
